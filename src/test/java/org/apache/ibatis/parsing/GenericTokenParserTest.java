@@ -18,6 +18,7 @@ package org.apache.ibatis.parsing;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import java.io.Serial;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +44,7 @@ class GenericTokenParserTest {
     public String handleToken(String content) {
       return variables.get(content);
     }
+
   }
 
   @ParameterizedTest
@@ -50,6 +52,7 @@ class GenericTokenParserTest {
   void shouldDemonstrateGenericTokenReplacement(String expected, String text) {
     GenericTokenParser parser = new GenericTokenParser("${", "}",
         new VariableTokenHandler(new HashMap<String, String>() {
+          @Serial
           private static final long serialVersionUID = 1L;
 
           {

@@ -43,6 +43,8 @@ import org.xml.sax.SAXParseException;
 /**
  * @author Clinton Begin
  * @author Kazuki Shimizu
+ * <p>
+ * XPath解析器
  */
 public class XPathParser {
 
