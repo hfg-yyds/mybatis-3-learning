@@ -23,8 +23,12 @@ import org.apache.ibatis.reflection.Reflector;
  * @author Clinton Begin
  */
 public class SetFieldInvoker implements Invoker {
+
+  // Field 对象
   private final Field field;
 
+
+  // Field 对象
   public SetFieldInvoker(Field field) {
     this.field = field;
   }

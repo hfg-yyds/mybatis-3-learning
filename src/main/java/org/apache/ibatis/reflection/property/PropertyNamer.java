@@ -21,6 +21,8 @@ import org.apache.ibatis.reflection.ReflectionException;
 
 /**
  * @author Clinton Begin
+ * <p>
+ * 属性名相关的工具类方法
  */
 public final class PropertyNamer {
 
@@ -28,6 +30,13 @@ public final class PropertyNamer {
     // Prevent Instantiation of Static Class
   }
 
+
+  /**
+   * 属性名相关的工具类方法  获取get,set方法的属性名称
+   *
+   * @param name 方法名称
+   * @return 属性名称
+   */
   public static String methodToProperty(String name) {
     if (name.startsWith("is")) {
       name = name.substring(2);
@@ -35,7 +44,7 @@ public final class PropertyNamer {
       name = name.substring(3);
     } else {
       throw new ReflectionException(
-          "Error parsing property name '" + name + "'.  Didn't start with 'is', 'get' or 'set'.");
+        "Error parsing property name '" + name + "'.  Didn't start with 'is', 'get' or 'set'.");
     }
 
     if (name.length() == 1 || name.length() > 1 && !Character.isUpperCase(name.charAt(1))) {

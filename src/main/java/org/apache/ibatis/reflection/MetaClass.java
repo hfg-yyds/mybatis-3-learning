@@ -28,6 +28,9 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 /**
  * @author Clinton Begin
+ * <p>
+ * <p>
+ * 类的元数据，基于 Reflector 和 PropertyTokenizer ，提供对指定类的各种骚操作。
  */
 public class MetaClass {
 
@@ -35,28 +38,34 @@ public class MetaClass {
   private final Reflector reflector;
 
   private MetaClass(Class<?> type, ReflectorFactory reflectorFactory) {
+    //通过构造方法，我们可以看出，一个 MetaClass 对象，对应一个 Class 对象。
     this.reflectorFactory = reflectorFactory;
     this.reflector = reflectorFactory.findForClass(type);
   }
 
+  //创建指定类的 MetaClass 对象
   public static MetaClass forClass(Class<?> type, ReflectorFactory reflectorFactory) {
     return new MetaClass(type, reflectorFactory);
   }
 
+  //创建类的指定属性的类的 MetaClass 对象
   public MetaClass metaClassForProperty(String name) {
     Class<?> propType = reflector.getGetterType(name);
     return MetaClass.forClass(propType, reflectorFactory);
   }
 
   public String findProperty(String name) {
+    //<3> 构建属性
     StringBuilder prop = buildProperty(name, new StringBuilder());
     return prop.length() > 0 ? prop.toString() : null;
   }
 
   public String findProperty(String name, boolean useCamelCaseMapping) {
+    //<1> 下划线转驼峰
     if (useCamelCaseMapping) {
       name = name.replace("_", "");
     }
+    //<2> 获得属性
     return findProperty(name);
   }
 
@@ -167,16 +176,24 @@ public class MetaClass {
   }
 
   private StringBuilder buildProperty(String name, StringBuilder builder) {
+    //创建 PropertyTokenizer 对象，对 name 进行分词
     PropertyTokenizer prop = new PropertyTokenizer(name);
+
+    // 有子表达式
     if (prop.hasNext()) {
+      // <4> 获得属性名，并添加到 builder 中
       String propertyName = reflector.findPropertyName(prop.getName());
       if (propertyName != null) {
+        //<4> 获得属性名，并添加到 builder 中
         builder.append(propertyName);
         builder.append(".");
+        // 创建 MetaClass 对象
         MetaClass metaProp = metaClassForProperty(propertyName);
+        // 递归解析子表达式 children ，并将结果添加到 builder 中
         metaProp.buildProperty(prop.getChildren(), builder);
       }
     } else {
+      // <4> 获得属性名，并添加到 builder 中
       String propertyName = reflector.findPropertyName(name);
       if (propertyName != null) {
         builder.append(propertyName);

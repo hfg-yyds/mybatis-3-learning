@@ -35,6 +35,7 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
   protected DataSource dataSource;
 
   public UnpooledDataSourceFactory() {
+    // 创建 UnpooledDataSource 对象
     this.dataSource = new UnpooledDataSource();
   }
 

@@ -31,13 +31,24 @@ import org.apache.ibatis.cache.CacheException;
  * database.
  * <p>
  * By its nature, this implementation can cause deadlock when used incorrectly.
+ * <p>
+ * 实现 Cache 接口，阻塞的 Cache 实现类。
  *
  * @author Eduardo Macarron
  */
 public class BlockingCache implements Cache {
-
+  /**
+   * 阻塞等待超时时间
+   */
   private long timeout;
+  /**
+   * 装饰的 Cache 对象
+   */
   private final Cache delegate;
+
+  /**
+   * 缓存键与 CountDownLatch 对象的映射
+   */
   private final ConcurrentHashMap<Object, CountDownLatch> locks;
 
   public BlockingCache(Cache delegate) {
@@ -58,16 +69,21 @@ public class BlockingCache implements Cache {
   @Override
   public void putObject(Object key, Object value) {
     try {
+      // <2.1> 添加缓存
       delegate.putObject(key, value);
     } finally {
+      // <2.2> 释放锁
       releaseLock(key);
     }
   }
 
   @Override
   public Object getObject(Object key) {
+    // <1.1> 获得锁
     acquireLock(key);
+    // <1.1> 获得锁
     Object value = delegate.getObject(key);
+    // <1.3> 释放锁
     if (value != null) {
       releaseLock(key);
     }
@@ -98,7 +114,7 @@ public class BlockingCache implements Cache {
           boolean acquired = latch.await(timeout, TimeUnit.MILLISECONDS);
           if (!acquired) {
             throw new CacheException(
-                "Couldn't get a lock in " + timeout + " for the key " + key + " at the cache " + delegate.getId());
+              "Couldn't get a lock in " + timeout + " for the key " + key + " at the cache " + delegate.getId());
           }
         } else {
           latch.await();
@@ -112,6 +128,7 @@ public class BlockingCache implements Cache {
   private void releaseLock(Object key) {
     CountDownLatch latch = locks.remove(key);
     if (latch == null) {
+      //检测到试图释放未获取的锁。这种情况不应该发生。
       throw new IllegalStateException("Detected an attempt at releasing unacquired lock. This should never happen.");
     }
     latch.countDown();

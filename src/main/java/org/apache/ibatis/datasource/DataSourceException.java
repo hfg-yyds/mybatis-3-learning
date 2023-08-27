@@ -17,11 +17,14 @@ package org.apache.ibatis.datasource;
 
 import org.apache.ibatis.exceptions.PersistenceException;
 
+import java.io.Serial;
+
 /**
  * @author Clinton Begin
  */
 public class DataSourceException extends PersistenceException {
 
+  @Serial
   private static final long serialVersionUID = -5251396250407091334L;
 
   public DataSourceException() {

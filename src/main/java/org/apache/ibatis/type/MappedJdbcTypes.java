@@ -42,7 +42,7 @@ public @interface MappedJdbcTypes {
   /**
    * Returns jdbc types to map {@link TypeHandler}.
    *
-   * @return jdbc types
+   * @return jdbc types  匹配的 JDBC Type 类型的注解
    */
   JdbcType[] value();
 

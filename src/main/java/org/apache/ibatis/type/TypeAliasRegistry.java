@@ -34,6 +34,8 @@ import org.apache.ibatis.io.Resources;
 
 /**
  * @author Clinton Begin
+ * <p>
+ * TypeHandler 注册表，相当于管理 TypeHandler 的容器，从其中能获取到对应的 TypeHandler 。
  */
 public class TypeAliasRegistry {
 
@@ -162,8 +164,7 @@ public class TypeAliasRegistry {
     // issue #748
     String key = alias.toLowerCase(Locale.ENGLISH);
     if (typeAliases.containsKey(key) && typeAliases.get(key) != null && !typeAliases.get(key).equals(value)) {
-      throw new TypeException(
-          "The alias '" + alias + "' is already mapped to the value '" + typeAliases.get(key).getName() + "'.");
+      throw new TypeException("The alias '" + alias + "' is already mapped to the value '" + typeAliases.get(key).getName() + "'.");
     }
     typeAliases.put(key, value);
   }
@@ -180,7 +181,6 @@ public class TypeAliasRegistry {
    * Gets the type aliases.
    *
    * @return the type aliases
-   *
    * @since 3.2.2
    */
   public Map<String, Class<?>> getTypeAliases() {

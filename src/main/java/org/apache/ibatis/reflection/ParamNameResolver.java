@@ -31,6 +31,9 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+/**
+ * 参数名解析器
+ */
 public class ParamNameResolver {
 
   public static final String GENERIC_NAME_PREFIX = "param";
@@ -48,10 +51,14 @@ public class ParamNameResolver {
    * <li>aMethod(@Param("M") int a, @Param("N") int b) -&gt; {{0, "M"}, {1, "N"}}</li>
    * <li>aMethod(int a, int b) -&gt; {{0, "0"}, {1, "1"}}</li>
    * <li>aMethod(int a, RowBounds rb, int b) -&gt; {{0, "0"}, {2, "1"}}</li>
+   * <p>
+   * 参数名映射 K 参数顺序   VALUE：参数名
    * </ul>
    */
   private final SortedMap<Integer, String> names;
-
+  /**
+   * 是否有 {@link Param} 注解的参数
+   */
   private boolean hasParamAnnotation;
 
   public ParamNameResolver(Configuration config, Method method) {
@@ -67,6 +74,7 @@ public class ParamNameResolver {
         continue;
       }
       String name = null;
+      //首先，从 @Param 注解中获取参数
       for (Annotation annotation : paramAnnotations[paramIndex]) {
         if (annotation instanceof Param) {
           hasParamAnnotation = true;
@@ -74,6 +82,7 @@ public class ParamNameResolver {
           break;
         }
       }
+      // 其次，获取真实的参数名
       if (name == null) {
         // @Param was not specified.
         if (useActualParamName) {
@@ -87,6 +96,7 @@ public class ParamNameResolver {
       }
       map.put(paramIndex, name);
     }
+    // 构建不可变集合
     names = Collections.unmodifiableSortedMap(map);
   }
 
@@ -112,10 +122,8 @@ public class ParamNameResolver {
    * A single non-special parameter is returned without a name. Multiple parameters are named using the naming rule. In
    * addition to the default names, this method also adds the generic names (param1, param2, ...).
    * </p>
-   *
-   * @param args
-   *          the args
-   *
+   *  获得参数名与值的映射
+   * @param args the args
    * @return the named params
    */
   public Object getNamedParams(Object[] args) {
@@ -146,13 +154,9 @@ public class ParamNameResolver {
   /**
    * Wrap to a {@link ParamMap} if object is {@link Collection} or array.
    *
-   * @param object
-   *          a parameter object
-   * @param actualParamName
-   *          an actual parameter name (If specify a name, set an object to {@link ParamMap} with specified name)
-   *
+   * @param object          a parameter object
+   * @param actualParamName an actual parameter name (If specify a name, set an object to {@link ParamMap} with specified name)
    * @return a {@link ParamMap}
-   *
    * @since 3.5.5
    */
   public static Object wrapToMapIfCollection(Object object, String actualParamName) {

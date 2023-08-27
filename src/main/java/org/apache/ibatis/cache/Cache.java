@@ -35,6 +35,8 @@ import java.util.concurrent.locks.ReadWriteLock;
  *   initialize();
  * }
  * </pre>
+ * <p>
+ * 缓存容器接口。注意，它是一个容器，有点类似 HashMap ，可以往其中添加各种缓存
  *
  * @author Clinton Begin
  */
@@ -47,17 +49,13 @@ public interface Cache {
   String getId();
 
   /**
-   * @param key
-   *          Can be any object but usually it is a {@link CacheKey}
-   * @param value
-   *          The result of a select.
+   * @param key   Can be any object but usually it is a {@link CacheKey}
+   * @param value The result of a select.
    */
   void putObject(Object key, Object value);
 
   /**
-   * @param key
-   *          The key
-   *
+   * @param key The key
    * @return The object stored in the cache.
    */
   Object getObject(Object key);
@@ -68,9 +66,7 @@ public interface Cache {
    * when a value is null and releases it when the value is back again. This way other threads will wait for the value
    * to be available instead of hitting the database.
    *
-   * @param key
-   *          The key
-   *
+   * @param key The key
    * @return Not used
    */
   Object removeObject(Object key);

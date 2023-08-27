@@ -39,7 +39,9 @@ import org.apache.ibatis.io.Resources;
 public class UnpooledDataSource implements DataSource {
 
   private ClassLoader driverClassLoader;
+
   private Properties driverProperties;
+
   private static final Map<String, Driver> registeredDrivers = new ConcurrentHashMap<>();
 
   private String driver;
